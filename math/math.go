@@ -153,7 +153,14 @@ func Rnd() float64 {
 // Returns a random integer between 0 (inclusive) and top (exclusive).
 //
 // 'sys.Rand' should be called previously.
-func Rndi(top int64) int64 {
+func Rndi(top int) int {
+	return rand.Intn(top)
+}
+
+// Returns a random integer between 0 (inclusive) and top (exclusive).
+//
+// 'sys.Rand' should be called previously.
+func Rndi64(top int64) int64 {
 	return rand.Int63n(top)
 }
 

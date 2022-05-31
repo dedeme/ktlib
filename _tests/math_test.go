@@ -65,4 +65,5 @@ func TestMath(t *testing.T) {
 	sys.Rand()
 	//t.Fatal(math.Rnd())
 	//t.Fatal(math.Rndi(6))
+	//t.Fatal(math.Rndi64(6))
 }
