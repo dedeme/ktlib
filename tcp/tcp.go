@@ -12,6 +12,13 @@ import (
 	"time"
 )
 
+// Server type
+type ServerT = net.Listener
+
+// Connection type
+type ConnT = net.Conn
+
+
 // Waits for a new connection on server 'sv'.
 //
 // The connection will have a maximum 'tm' milliseconds to finish any
@@ -22,7 +29,7 @@ import (
 //      'tcp.Write', 'tcp.WriteBin' or 'tcp.CloseServer'.
 //    - 'err != nil' if the connection failed.
 // The tcp connection returned shuld be closed with tcp.CloseConnection.
-func Accept(sv net.Listener, tm int) (conn net.Conn, err error) {
+func Accept(sv ServerT, tm int) (conn ConnT, err error) {
 	conn, err = sv.Accept()
 	if err == nil {
 		if tm > 0 {
@@ -33,7 +40,7 @@ func Accept(sv net.Listener, tm int) (conn net.Conn, err error) {
 }
 
 // Closes 'conn'.
-func CloseConnection(conn net.Conn) {
+func CloseConnection(conn ConnT) {
 	err := conn.Close()
 	if err != nil {
 		panic(err)
@@ -41,7 +48,7 @@ func CloseConnection(conn net.Conn) {
 }
 
 // Closes 'sv'.
-func CloseServer(sv net.Listener) {
+func CloseServer(sv ServerT) {
 	err := sv.Close()
 	if err != nil {
 		panic(err)
@@ -58,7 +65,7 @@ func CloseServer(sv net.Listener) {
 //      tcp.WriteBin or tcp.CloseConnection.
 //    - 'err != nil' if the connection failed.
 // The tcp connection returned shuld be closed with tcp.CloseConnection.
-func Dial(tcpServer string, tm int) (conn net.Conn, err error) {
+func Dial(tcpServer string, tm int) (conn ConnT, err error) {
 	conn, err = net.Dial("tcp", tcpServer)
 	if err == nil {
 		if tm > 0 {
@@ -70,13 +77,13 @@ func Dial(tcpServer string, tm int) (conn net.Conn, err error) {
 
 // Reads a request from connection 'conn' with a maximum bytes length of 'lim'
 // ('lim' must be greater than '0').
-func Read(conn net.Conn, lim int) string {
+func Read(conn ConnT, lim int) string {
 	return string(ReadBin(conn, lim))
 }
 
 // Reads a request from connection 'conn' with a maximum bytes length of 'lim'
 // ('lim' must be greater than '0').
-func ReadBin(conn net.Conn, lim int) []byte {
+func ReadBin(conn ConnT, lim int) []byte {
 	if lim < 1 {
 		panic("Connection limit less than 1")
 	}
@@ -101,7 +108,7 @@ func ReadBin(conn net.Conn, lim int) []byte {
 // Returns a tcp server to use with 'tcp.accept'.
 //    port: Comunications port.
 // The tcp server returned shuld be closed with tcp.CloseServer.
-func Server(port int) net.Listener {
+func Server(port int) ServerT {
 	sv, err := net.Listen("tcp", ":"+strconv.Itoa(port))
 	if err != nil {
 		panic(err)
@@ -110,12 +117,12 @@ func Server(port int) net.Listener {
 }
 
 // Writes a string through connection 'conn'.
-func Write(conn net.Conn, s string) {
+func Write(conn ConnT, s string) {
 	fmt.Fprintf(conn, s)
 }
 
 // Writes a []byte through connection 'conn'.
-func WriteBin(conn net.Conn, bs []byte) {
+func WriteBin(conn ConnT, bs []byte) {
 	_, err := conn.Write(bs)
 	if err != nil {
 		panic(err)
