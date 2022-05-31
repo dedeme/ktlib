@@ -111,14 +111,13 @@ func Server(port int) net.Listener {
 
 // Writes a string through connection 'conn'.
 func Write(conn net.Conn, s string) {
-  fmt.Fprintf(conn, s)
+	fmt.Fprintf(conn, s)
 }
 
 // Writes a []byte through connection 'conn'.
 func WriteBin(conn net.Conn, bs []byte) {
-  _, err := conn.Write(bs)
-  if err != nil {
-    panic(err)
-  }
+	_, err := conn.Write(bs)
+	if err != nil {
+		panic(err)
+	}
 }
-
