@@ -72,20 +72,24 @@ var mimetypes = map[string]string{
 // Tcp server.
 var sv tcp.ServerT
 
+// Tcp stopped?
+var stopCode string
+
 // Web pages root in the file system.
 var wroot string
 
 // Starts server.
-//   port   : Connection port.
-//   tm     : Maximum 'tm' milliseconds to finish any I/O operation.
-//            If 'tm' <= 0 there will not have limit for waiting.
-//   root   : Root directory of web pages and cgi programs.
+//   port    : Connection port.
+//   tm      : Maximum 'tm' milliseconds to finish any I/O operation.
+//             If 'tm' <= 0 there will not have limit for waiting.
+//   root    : Server working directory.
 //               -Web pages must be in 'root'/www.
-//               -Binary files must be in 'root'/bin.
-//               -Data directory will be in 'root'/dmcgi.
-//   handler: Function to process requests.
+//   stopCode: Code for stopping server.
+//   handler : Function to process requests.
 // Connection request/response is limited to 10.000.000 bits.
-func Start(port, tm int, root string, handler func(string) string) {
+func Start(
+	port, tm int, root, stopcode string, handler func(string) string,
+) {
 	if sv != nil {
 		return
 	}
@@ -94,14 +98,20 @@ func Start(port, tm int, root string, handler func(string) string) {
 	wroot = path.Cat(root, "www")
 	file.Cd(root)
 
-	for sv != nil {
+	for {
 		conn, err := tcp.Accept(sv, tm)
 		if err != nil {
 			panic(err)
 		}
 
+		tx := tcp.Read(conn, 10_000_000)
+		if tx == stopCode {
+			tcp.CloseConnection(conn)
+			tcp.CloseServer(sv)
+			break
+		}
+
 		thread.Run(func() {
-			tx := tcp.Read(conn, 10_000_000)
 			tcp.WriteBin(conn, []byte(handler(tx)))
 			tcp.CloseConnection(conn)
 		})
@@ -109,13 +119,16 @@ func Start(port, tm int, root string, handler func(string) string) {
 }
 
 // Stops server.
-func Stop() {
-	if sv != nil {
-		tcp.CloseServer(sv)
+func Stop(port int) {
+	conn, err := tcp.Dial("localhost:"+str.Fmt("%d", port), 0)
+	if err == nil {
+		tcp.Write(conn, stopCode)
 	}
 }
 
 // Returns web file data or 'ok=false' if 'rq' is not a GET request.
+//
+// Web pages must be in 'root'/www.
 //
 // NOTE: Only HTTP/1.1 requests are allowed.
 //   rq: Complete client request.
@@ -182,6 +195,8 @@ func GetRq(rq string) (rp string, ok bool) {
 
 // Executes a 'ccgi.sh' command and returns its result or 'ok=false' if
 // rq is not a valid POST request ('POST /cgi-bin/ccgi.sh HTTP/1.1').
+//
+// Binary files must be in 'root'/bin.
 func DmCgiRq(rq string) (rp string, ok bool) {
 	rqUnix := str.Replace(rq, "\r", "")
 	ix := str.Index(rq, "\n")
