@@ -135,7 +135,7 @@ func Stop(port int) {
 func GetRq(rq string) (rp string, ok bool) {
 	ix := str.Index(rq, "\n")
 	if ix == -1 {
-		rp = badRequestRp(rq)
+		rp = BadRequestRp(rq)
 		ok = true
 		return
 	}
@@ -147,7 +147,7 @@ func GetRq(rq string) (rp string, ok bool) {
 	rq = str.Trim(rq[4:])
 	ix = str.Index(rq, " ")
 	if ix == -1 {
-		rp = badRequestRp(rq)
+		rp = BadRequestRp(rq)
 		ok = true
 		return
 	}
@@ -173,7 +173,7 @@ func GetRq(rq string) (rp string, ok bool) {
 
 	fpath := path.Canonical(path.Cat(wroot, r2))
 	if !file.Exists(fpath) {
-		rp = notFoundRp()
+		rp = NotFoundRp()
 		ok = true
 		return
 	}
@@ -201,7 +201,7 @@ func DmCgiRq(rq string) (rp string, ok bool) {
 	rqUnix := str.Replace(rq, "\r", "")
 	ix := str.Index(rq, "\n")
 	if ix == -1 {
-		rp = badRequestRp(rq)
+		rp = BadRequestRp(rq)
 		ok = true
 		return
 	}
@@ -213,7 +213,7 @@ func DmCgiRq(rq string) (rp string, ok bool) {
 
 	ix = str.Index(rqUnix, "\n\n")
 	if ix == -1 {
-		rp = badRequestRp(rq)
+		rp = BadRequestRp(rq)
 		ok = true
 		return
 	}
@@ -221,7 +221,7 @@ func DmCgiRq(rq string) (rp string, ok bool) {
 	rqUnix = str.Trim(rqUnix[ix+2:])
 	ix = str.Index(rqUnix, ":")
 	if ix == -1 {
-		rp = badRequestRp(rq)
+		rp = BadRequestRp(rq)
 		ok = true
 		return
 	}
@@ -236,7 +236,7 @@ func DmCgiRq(rq string) (rp string, ok bool) {
 			rp = stdout
 		}
 	} else {
-		rp = textRp(stdout)
+		rp = TextRp(stdout)
 	}
 	ok = true
 	return
@@ -244,7 +244,7 @@ func DmCgiRq(rq string) (rp string, ok bool) {
 
 // Return a html valid response.
 //   h: HTML text.
-func htmlRp(h string) string {
+func HtmlRp(h string) string {
 	return "HTTP/1.1 200 OK\n" +
 		"Server: Kut Webserver\n" +
 		"Content-type: text/html\n" +
@@ -254,7 +254,7 @@ func htmlRp(h string) string {
 
 // Return a text valid response.
 //   h: HTML text.
-func textRp(tx string) string {
+func TextRp(tx string) string {
 	return "HTTP/1.1 200 OK\n" +
 		"Server: Kut Webserver\n" +
 		"Content-type: text/text\n" +
@@ -263,7 +263,7 @@ func textRp(tx string) string {
 }
 
 // Return a 'Not Found' response.
-func notFoundRp() string {
+func NotFoundRp() string {
 	return "HTTP/1.1 404 Not Found\n" +
 		"Server: Kut Webserver\n" +
 		"Content-type: text/plain\n\n" +
@@ -272,7 +272,7 @@ func notFoundRp() string {
 
 // Return a 'Bad Request' response.
 //   rq: Request.
-func badRequestRp(rq string) string {
+func BadRequestRp(rq string) string {
 	return "HTTP/1.1 400 Bad Request\n" +
 		"Server: Kut Webserver\n" +
 		"Content-type: text/plain\n\n" +
