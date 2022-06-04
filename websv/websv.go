@@ -84,7 +84,7 @@ var wroot string
 //             If 'tm' <= 0 there will not have limit for waiting.
 //   root    : Server working directory.
 //               -Web pages must be in 'root'/www.
-//   stopCode: Code for stopping server.
+//   stopcode: Code for stopping server.
 //   handler : Function to process requests.
 // Connection request/response is limited to 10.000.000 bits.
 func Start(
@@ -94,6 +94,7 @@ func Start(
 		return
 	}
 
+	stopCode = stopcode
 	sv = tcp.Server(port)
 	wroot = path.Cat(root, "www")
 	file.Cd(root)

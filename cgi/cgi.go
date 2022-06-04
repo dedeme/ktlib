@@ -26,6 +26,8 @@ const (
 	noSessionKey = "nosession"
 )
 
+type T = map[string]string
+
 var homeV string
 var tExpirationV int
 var fkey = cryp.Key(demeKey, len(demeKey)) // File encryption key
@@ -253,7 +255,7 @@ func Connect(sessionId string) string {
 		r.conKey = conKey
 		replaceSession(r)
 	}
-	return Rp(sessionId, map[string]string{
+	return Rp(sessionId, T{
 		"key":    js.Ws(comKey),
 		"conKey": js.Ws(conKey),
 		"user":   js.Ws(user),
@@ -286,7 +288,7 @@ func Authentication(key, user, pass string, withExpiration bool) string {
 		addSession(sessionId, comKey, conKey, user, level, lapse)
 	}
 
-	return Rp(key, map[string]string{
+	return Rp(key, T{
 		"sessionId": js.Ws(sessionId),
 		"key":       js.Ws(comKey),
 		"conKey":    js.Ws(conKey),
@@ -318,7 +320,7 @@ func GetComKey(ssId, conKey string) (comKey string, ok bool) {
 //            if operation succeeded. A fail can come up if 'user'
 //            authentication fails.
 func ChangePass(ck, user, old, new string) (rp string) {
-	rp = Rp(ck, map[string]string{"ok": js.Wb(false)})
+	rp = Rp(ck, T{"ok": js.Wb(false)})
 
 	us := readUsers()
 	var u *userT
@@ -339,7 +341,7 @@ func ChangePass(ck, user, old, new string) (rp string) {
 
 	u.pass = cryp.Key(new, Klen)
 	writeUsers(us)
-	rp = Rp(ck, map[string]string{"ok": js.Wb(true)})
+	rp = Rp(ck, T{"ok": js.Wb(true)})
 	return
 }
 
@@ -361,7 +363,7 @@ func DelSession(ck string, sessionId string) string {
 // Returns a response to send to client.
 //	 ck: Communication key.
 //	 rp: Response.
-func Rp(ck string, rp map[string]string) string {
+func Rp(ck string, rp T) string {
 	j := js.Wo(rp)
 	return cryp.Encode(ck, j)
 }
@@ -369,25 +371,25 @@ func Rp(ck string, rp map[string]string) string {
 // Returns an empty response.
 //	 ck: Communication key.
 func RpEmpty(ck string) string {
-	return Rp(ck, map[string]string{})
+	return Rp(ck, T{})
 }
 
 // Returns a message with an only field "error" with value 'msg'.
 //	 ck: Communication key.
 func RpError(ck, msg string) string {
-	return Rp(ck, map[string]string{"error": js.Ws(msg)})
+	return Rp(ck, T{"error": js.Ws(msg)})
 }
 
 // Returns a message with an only field "expired" with value 'true',
 // codified with the key 'noSessionKey' ("nosession")
 func RpExpired() string {
-	return Rp(noSessionKey, map[string]string{"expired": js.Wb(true)})
+	return Rp(noSessionKey, T{"expired": js.Wb(true)})
 }
 
 // Requests --------------------------------------------------------------------
 
 // Reads a bool value
-func RqBool(rq map[string]string, key string) (v bool) {
+func RqBool(rq T, key string) (v bool) {
 	j, ok := rq[key]
 	if !ok {
 		panic(fmt.Sprintf("Key '%v' not found in request", key))
@@ -397,7 +399,7 @@ func RqBool(rq map[string]string, key string) (v bool) {
 }
 
 // Reads a int value
-func RqInt(rq map[string]string, key string) (v int) {
+func RqInt(rq T, key string) (v int) {
 	j, ok := rq[key]
 	if !ok {
 		panic(fmt.Sprintf("Key '%v' not found in request", key))
@@ -407,7 +409,7 @@ func RqInt(rq map[string]string, key string) (v int) {
 }
 
 // Reads a int64 value
-func RqLong(rq map[string]string, key string) (v int64) {
+func RqLong(rq T, key string) (v int64) {
 	j, ok := rq[key]
 	if !ok {
 		panic(fmt.Sprintf("Key '%v' not found in request", key))
@@ -417,7 +419,7 @@ func RqLong(rq map[string]string, key string) (v int64) {
 }
 
 // Reads a float32 value
-func RqFloat(rq map[string]string, key string) (v float32) {
+func RqFloat(rq T, key string) (v float32) {
 	j, ok := rq[key]
 	if !ok {
 		panic(fmt.Sprintf("Key '%v' not found in request", key))
@@ -427,7 +429,7 @@ func RqFloat(rq map[string]string, key string) (v float32) {
 }
 
 // Reads a float64 value
-func RqDouble(rq map[string]string, key string) (v float64) {
+func RqDouble(rq T, key string) (v float64) {
 	j, ok := rq[key]
 	if !ok {
 		panic(fmt.Sprintf("Key '%v' not found in request", key))
@@ -437,7 +439,7 @@ func RqDouble(rq map[string]string, key string) (v float64) {
 }
 
 // Reads a string value
-func RqString(rq map[string]string, key string) (v string) {
+func RqString(rq T, key string) (v string) {
 	j, ok := rq[key]
 	if !ok {
 		panic(fmt.Sprintf("Key '%v' not found in request", key))
