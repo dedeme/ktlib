@@ -19,6 +19,22 @@ import (
 
 var rndV int64
 
+type OpT[T any] func() (v T, ok bool)
+
+// Returns a function with return 'ok==false'
+func None[T any]() OpT[T] {
+	return func() (v T, ok bool) {
+		return
+	}
+}
+
+// Returns a function with return 'ok==true' and 'v' as value
+func Some[T any](v T) OpT[T] {
+	return func() (T, bool) {
+		return v, true
+	}
+}
+
 // Adds the stack trace to 'msg'.
 func Fail(msg string) string {
 	return msg + "\n" + string(debug.Stack())

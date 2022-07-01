@@ -120,10 +120,12 @@ func Start(
 }
 
 // Stops server.
-func Stop(port int) {
+//   port    : Connection port.
+//   stopcode: Code for stopping server.
+func Stop(port int, stopcode string) {
 	conn, err := tcp.Dial("localhost:"+str.Fmt("%d", port), 0)
 	if err == nil {
-		tcp.Write(conn, stopCode)
+		tcp.Write(conn, stopcode)
 	}
 }
 

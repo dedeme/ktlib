@@ -5,7 +5,6 @@
 package cgi
 
 import (
-	"fmt"
 	"github.com/dedeme/ktlib/cryp"
 	"github.com/dedeme/ktlib/file"
 	"github.com/dedeme/ktlib/js"
@@ -384,66 +383,4 @@ func RpError(ck, msg string) string {
 // codified with the key 'noSessionKey' ("nosession")
 func RpExpired() string {
 	return Rp(noSessionKey, T{"expired": js.Wb(true)})
-}
-
-// Requests --------------------------------------------------------------------
-
-// Reads a bool value
-func RqBool(rq T, key string) (v bool) {
-	j, ok := rq[key]
-	if !ok {
-		panic(fmt.Sprintf("Key '%v' not found in request", key))
-	}
-	v = js.Rb(j)
-	return
-}
-
-// Reads a int value
-func RqInt(rq T, key string) (v int) {
-	j, ok := rq[key]
-	if !ok {
-		panic(fmt.Sprintf("Key '%v' not found in request", key))
-	}
-	v = js.Ri(j)
-	return
-}
-
-// Reads a int64 value
-func RqLong(rq T, key string) (v int64) {
-	j, ok := rq[key]
-	if !ok {
-		panic(fmt.Sprintf("Key '%v' not found in request", key))
-	}
-	v = js.Rl(j)
-	return
-}
-
-// Reads a float32 value
-func RqFloat(rq T, key string) (v float32) {
-	j, ok := rq[key]
-	if !ok {
-		panic(fmt.Sprintf("Key '%v' not found in request", key))
-	}
-	v = js.Rf(j)
-	return
-}
-
-// Reads a float64 value
-func RqDouble(rq T, key string) (v float64) {
-	j, ok := rq[key]
-	if !ok {
-		panic(fmt.Sprintf("Key '%v' not found in request", key))
-	}
-	v = js.Rd(j)
-	return
-}
-
-// Reads a string value
-func RqString(rq T, key string) (v string) {
-	j, ok := rq[key]
-	if !ok {
-		panic(fmt.Sprintf("Key '%v' not found in request", key))
-	}
-	v = js.Rs(j)
-	return
 }
