@@ -152,6 +152,7 @@ func Wa(v []string) string {
 
 // Reads a JSON slice of js-string values.
 func Ra(j string) (v []string) {
+  j = strings.TrimSpace(j)
 	if !strings.HasPrefix(j, "[") {
 		panic(fmt.Sprintf("Array does not start with '[' in\n'%v'", j))
 	}
@@ -206,6 +207,7 @@ func Wo(v map[string]string) string {
 
 // Reads a JSON object (map of string[js-string] values).
 func Ro(j string) (v map[string]string) {
+  j = strings.TrimSpace(j)
 	v = make(map[string]string)
 	if !strings.HasPrefix(j, "{") {
 		panic(fmt.Sprintf("Object does not start with '{' in\n'%v'", j))
