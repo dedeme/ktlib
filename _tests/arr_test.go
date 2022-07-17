@@ -137,38 +137,46 @@ func TestArr(t *testing.T) {
 	eq(t, sum, arr.Reduce(a1, 0, fnAdd)*2)
 	eq(t, sum, 20)
 
-	eq(t, arr.All(a0, func(e int) bool {
+	eq(t, arr.All(a0, 3), true)
+	eq(t, arr.All(a1, 3), false)
+	eq(t, arr.All(arr.Take(a1, 1), 0), true)
+	eq(t, arr.Allf(a0, func(e int) bool {
 		return e < 3
 	}), true)
-	eq(t, arr.All(a1, func(e int) bool {
+	eq(t, arr.Allf(a1, func(e int) bool {
 		return e < 32
 	}), true)
-	eq(t, arr.All(a1, func(e int) bool {
+	eq(t, arr.Allf(a1, func(e int) bool {
 		return e < 3
 	}), false)
-	eq(t, arr.Any(a0, func(e int) bool {
+	eq(t, arr.Any(a0, 3), false)
+	eq(t, arr.Any(a1, 3), true)
+	eq(t, arr.Any(a1, 33), false)
+	eq(t, arr.Anyf(a0, func(e int) bool {
 		return e < 3
 	}), false)
-	eq(t, arr.Any(a1, func(e int) bool {
+	eq(t, arr.Anyf(a1, func(e int) bool {
 		return e < 32
 	}), true)
-	eq(t, arr.Any(a1, func(e int) bool {
+	eq(t, arr.Anyf(a1, func(e int) bool {
 		return e < 3
 	}), true)
-	eq(t, arr.Any(a1, func(e int) bool {
+	eq(t, arr.Anyf(a1, func(e int) bool {
 		return e < -3
 	}), false)
 
-	eq(t, arr.Index(a0, func(e int) bool {
+	eq(t, arr.Index(a1, 4), 4)
+	eq(t, arr.Index(a1, 5), -1)
+	eq(t, arr.Indexf(a0, func(e int) bool {
 		return e < 3
 	}), -1)
-	eq(t, arr.Index(a1, func(e int) bool {
+	eq(t, arr.Indexf(a1, func(e int) bool {
 		return e < 32
 	}), 0)
-	eq(t, arr.Index(a1, func(e int) bool {
+	eq(t, arr.Indexf(a1, func(e int) bool {
 		return e == 4
 	}), 4)
-	eq(t, arr.Index(a1, func(e int) bool {
+	eq(t, arr.Indexf(a1, func(e int) bool {
 		return e == 5
 	}), -1)
 

@@ -11,8 +11,18 @@ import (
 	"strings"
 )
 
+// Returns 'true' if every element of 'a' is equals to 'e'.
+func All[T comparable](a []T, e T) bool {
+	for _, e2 := range a {
+		if e2 != e {
+			return false
+		}
+	}
+	return true
+}
+
 // Returns 'true' if 'fn' returns true with every element of 'a'.
-func All[T any](a []T, fn func(T) bool) bool {
+func Allf[T any](a []T, fn func(T) bool) bool {
 	for _, e := range a {
 		if !fn(e) {
 			return false
@@ -21,8 +31,18 @@ func All[T any](a []T, fn func(T) bool) bool {
 	return true
 }
 
+// Returns 'true' if at least an element of 'a' is equals to 'e'.
+func Any[T comparable](a []T, e T) bool {
+	for _, e2 := range a {
+		if e2 == e {
+			return true
+		}
+	}
+	return false
+}
+
 // Returns 'true' if 'fn' returns true with at least one element of 'a'.
-func Any[T any](a []T, fn func(T) bool) bool {
+func Anyf[T any](a []T, fn func(T) bool) bool {
 	for _, e := range a {
 		if fn(e) {
 			return true
@@ -31,10 +51,18 @@ func Any[T any](a []T, fn func(T) bool) bool {
 	return false
 }
 
+// Appends a2 to a1 in place.
+func Cat[T any](a1 *[]T, a2 []T) {
+	*a1 = append(*a1, a2...)
+}
+
 // Removes in place every element of 'a'.
 func Clear[T any](a *[]T) {
 	*a = []T{}
 }
+
+/// Returns 'true' if 'a' contains 'e'
+//func Contains[
 
 // Returns a shallow copy of 'a'.
 func Copy[T any](a []T) []T {
@@ -43,11 +71,6 @@ func Copy[T any](a []T) []T {
 		r[i] = e
 	}
 	return r
-}
-
-// Appends a2 to a1 in place.
-func Cat[T any](a1 *[]T, a2 []T) {
-	*a1 = append(*a1, a2...)
 }
 
 // Returns a new slice with the remains elements of 'a' after make an
@@ -221,9 +244,20 @@ func Find[T any](a []T, fn func(T) bool) (el T, ok bool) {
 	return
 }
 
+// Returns the index of the first element equals to 'e',
+// or -1 if such element does not exist.
+func Index[T comparable](a []T, e T) int {
+	for i, e2 := range a {
+		if e2 == e {
+			return i
+		}
+	}
+	return -1
+}
+
 // Returns the index of the first element which produce 'true' with 'fn',
 // or -1 if such element does not exist.
-func Index[T any](a []T, fn func(T) bool) int {
+func Indexf[T any](a []T, fn func(T) bool) int {
 	for i, e := range a {
 		if fn(e) {
 			return i
