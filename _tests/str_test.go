@@ -107,6 +107,9 @@ func TestStr(t *testing.T) {
 	eq(t, len(str.Split("ab", "--")), 1)
 	eq(t, arr.Join(str.Split("ab", "--"), "--"), "ab")
 
+	eq(t, arr.ToStr(str.SplitTrim(" a  ", ";")), "[a]")
+	eq(t, arr.ToStr(str.SplitTrim("   a  ;   b ;c", ";")), "[a, b, c]")
+
 	eq(t, ""[:0], "")
 	eq(t, ""[0:], "")
 	eq(t, ""[0:0], "")

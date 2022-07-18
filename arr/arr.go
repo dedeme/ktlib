@@ -103,7 +103,7 @@ func DropWhile[T any](a []T, fn func(T) bool) []T {
 
 //  Returns two new slices:
 //    'els', wiht elements of 'a' witout duplicates.
-//    'dup', with duplicates of 'a'. There is only one copy of each duplicate.
+//    'dup', with duplicates of 'a'. It can be several copies of each duplicate.
 func Duplicates[T comparable](a []T) (els, dup []T) {
 	inEls := func(el T) bool {
 		for _, e := range els {
@@ -113,20 +113,10 @@ func Duplicates[T comparable](a []T) (els, dup []T) {
 		}
 		return false
 	}
-	inDup := func(el T) bool {
-		for _, e := range dup {
-			if e == el {
-				return true
-			}
-		}
-		return false
-	}
 
 	for _, e := range a {
 		if inEls(e) {
-			if !inDup(e) {
-				dup = append(dup, e)
-			}
+			dup = append(dup, e)
 		} else {
 			els = append(els, e)
 		}
@@ -136,7 +126,7 @@ func Duplicates[T comparable](a []T) (els, dup []T) {
 
 //  Returns two new slices:
 //    'els', wiht elements of 'a' witout duplicates.
-//    'dup', with duplicates of 'a'. There is only one copy of each duplicate.
+//    'dup', with duplicates of 'a'. It can be several copies of each duplicate.
 //  'fn' returns 'true' when its two elements are equals.
 func Duplicatesf[T any](a []T, fn func(e1, e2 T) bool) (els, dup []T) {
 	inEls := func(el T) bool {
@@ -147,20 +137,10 @@ func Duplicatesf[T any](a []T, fn func(e1, e2 T) bool) (els, dup []T) {
 		}
 		return false
 	}
-	inDup := func(el T) bool {
-		for _, e := range dup {
-			if fn(e, el) {
-				return true
-			}
-		}
-		return false
-	}
 
 	for _, e := range a {
 		if inEls(e) {
-			if !inDup(e) {
-				dup = append(dup, e)
-			}
+			dup = append(dup, e)
 		} else {
 			els = append(els, e)
 		}
@@ -175,7 +155,7 @@ func Each[T any](a []T, fn func(T)) {
 	}
 }
 
-// Executes 'fn' with each element of 'a'.
+// Executes 'fn' with each element of 'a' and its index.
 func EachIx[T any](a []T, fn func(T, int)) {
 	for i, e := range a {
 		fn(e, i)
@@ -370,7 +350,7 @@ func Shuffle[T any](a []T) {
 	}
 }
 
-//  Sorts elements of 'A' from less to greater.
+//  Sorts elements of 'a' from less to greater.
 //    'less' is a function which returns 'true' if the first paramenter is
 //    less than the second one.
 //    NOTE: If 'less' returns 'true' when the first parameter is greater than the
@@ -382,8 +362,8 @@ func Sort[T any](a []T, fn func(T, T) bool) {
 }
 
 // Returns a copy of the first 'n' elements of 'a'.
-//    -If 'n <= 0' returns the complete array.
-//    -if 'n >= len(a)' returns an empty array.
+//    -If 'n >= l.Count()' returns the complete array.
+//    -if 'n <= 0' returns an empty array.
 func Take[T any](a []T, n int) []T {
 	l := len(a)
 	if n < 0 {

@@ -131,28 +131,28 @@ func Rtrim(s string) string {
 
 // Returns an array with 's' splitted by 'sep'.
 // Examples:
-//   assert arr.size(str.split("", "")) == 0;
-//   assert arr.join(str.split("", ""), "") == "";
-//   assert arr.size(str.split("a", "")) == 1;
-//   assert arr.join(str.split("a", ""), "") == "a";
-//   assert arr.size(str.split("añ", "")) == 2;
-//   assert arr.join(str.split("añ", ""), "") == "añ";
-//   assert arr.size(str.split("", ";")) == 1;
-//   assert arr.join(str.split("", ";"), ";") == "";
-//   assert arr.size(str.split("ab;cd;", ";")) == 3;
-//   assert arr.join(str.split("ab;cd;", ";"), ";") == "ab;cd;";
-//   assert arr.size(str.split("ab;cd", ";")) == 2;
-//   assert arr.join(str.split("ab;cd", ";"), ";") == "ab;cd";
+//   assert arr.Size(str.Split("", "")) == 0;
+//   assert arr.Join(str.Split("", ""), "") == "";
+//   assert arr.Size(str.Split("a", "")) == 1;
+//   assert arr.Join(str.Split("a", ""), "") == "a";
+//   assert arr.Size(str.Split("añ", "")) == 2;
+//   assert arr.Join(str.Split("añ", ""), "") == "añ";
+//   assert arr.Size(str.Split("", ";")) == 1;
+//   assert arr.Join(str.Split("", ";"), ";") == "";
+//   assert arr.Size(str.Split("ab;cd;", ";")) == 3;
+//   assert arr.Join(str.Split("ab;cd;", ";"), ";") == "ab;cd;";
+//   assert arr.Size(str.Split("ab;cd", ";")) == 2;
+//   assert arr.Join(str.Split("ab;cd", ";"), ";") == "ab;cd";
 func Split(s, sep string) []string {
 	return strings.Split(s, sep)
 }
 
-// Equals to split, triming each strings in the resulting array.
+// Equals to split, triming each string in the resulting array.
 func SplitTrim(s, sep string) []string {
 	ss := strings.Split(s, sep)
 	r := make([]string, len(ss))
 	for i, e := range ss {
-		r[i] = e
+		r[i] = strings.TrimSpace(e)
 	}
 	return r
 }

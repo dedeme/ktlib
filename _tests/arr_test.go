@@ -110,11 +110,11 @@ func TestArr(t *testing.T) {
 
 	els, dup := arr.Duplicates([]int{1, 2, 1, 0, 3, 3, 4, -1, -1, -1, 100})
 	eq(t, arr.Eq(els, []int{1, 2, 0, 3, 4, -1, 100}), true)
-	eq(t, arr.Eq(dup, []int{1, 3, -1}), true)
+	eq(t, arr.Eq(dup, []int{1, 3, -1, -1}), true)
 
 	els, dup = arr.Duplicatesf([]int{1, 2, 1, 0, 3, 3, 4, -1, -1, -1, 100}, fnEq)
 	eq(t, arr.Eq(els, []int{1, 2, 0, 3, 4, -1, 100}), true)
-	eq(t, arr.Eq(dup, []int{1, 3, -1}), true)
+	eq(t, arr.Eq(dup, []int{1, 3, -1, -1}), true)
 
 	fnAdd := func(seed, n int) int {
 		return seed + n
