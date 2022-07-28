@@ -30,4 +30,10 @@ func TestExt(t *testing.T) {
 	file.Del(zdir2)
 	file.Del("db/z.zip")
 
+  file.Write(
+    "db/HtmlDocTest.pdf",
+    string(ext.HtmldocStr(false, "<p><b>H</b>ello<br>€ cañón</p>")),
+  )
+  eq(t, file.Exists("db/HtmlDocTest.pdf"), true)
+  file.Del("db/HtmlDocTest.pdf")
 }

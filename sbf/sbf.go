@@ -1,7 +1,7 @@
 // Copyright 21-Jul-2022 ºDeme
 // GNU General Public License - V3 <http://www.gnu.org/licenses/>
 
-// Strings constructor (string builder)
+// Strings constructor (string buffer)
 package sbf
 
 import (
