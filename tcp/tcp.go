@@ -72,6 +72,7 @@
 package tcp
 
 import (
+	"errors"
 	"fmt"
 	"io"
 	"net"
@@ -143,32 +144,41 @@ func Dial(tcpServer string, tm int) (conn ConnT, err error) {
 
 // Reads a request from connection 'conn' with a maximum bytes length of 'lim'
 // ('lim' must be greater than '0').
-func Read(conn ConnT, lim int) string {
-	return string(ReadBin(conn, lim))
+func Read(conn ConnT, lim int) (data string, err error) {
+	var bs []byte
+	bs, err = ReadBin(conn, lim)
+	if err == nil {
+		data = string(bs)
+	}
+	return
 }
 
 // Reads a request from connection 'conn' with a maximum bytes length of 'lim'
 // ('lim' must be greater than '0').
-func ReadBin(conn ConnT, lim int) []byte {
+func ReadBin(conn ConnT, lim int) (data []byte, err error) {
 	if lim < 1 {
 		panic("Connection limit less than 1")
 	}
 	bs := make([]byte, lim+1)
-	n, err := conn.Read(bs)
-	if err != nil {
-		if err == io.EOF {
-			return []byte{}
+	n, err0 := conn.Read(bs)
+	if err0 != nil {
+		if err0 == io.EOF {
+			data = []byte{}
+			return
 		}
-		panic(err)
+		err = err0
+		return
 	}
 	if n > lim {
-		panic(fmt.Sprintf("Bytes read out of limit (%v)", lim))
+		err = errors.New(fmt.Sprintf("Bytes read out of limit (%v)", lim))
+		return
 	}
 	bs2 := make([]byte, n)
 	for i := 0; i < n; i++ {
 		bs2[i] = bs[i]
 	}
-	return bs2
+	data = bs2
+	return
 }
 
 // Returns a tcp server to use with 'tcp.accept'.
@@ -183,14 +193,13 @@ func Server(port int) ServerT {
 }
 
 // Writes a string through connection 'conn'.
-func Write(conn ConnT, s string) {
-	fmt.Fprintf(conn, s)
+func Write(conn ConnT, s string) (err error) {
+	_, err = fmt.Fprintf(conn, s)
+	return
 }
 
 // Writes a []byte through connection 'conn'.
-func WriteBin(conn ConnT, bs []byte) {
-	_, err := conn.Write(bs)
-	if err != nil {
-		panic(err)
-	}
+func WriteBin(conn ConnT, bs []byte) (err error) {
+	_, err = conn.Write(bs)
+	return
 }

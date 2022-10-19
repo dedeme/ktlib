@@ -8,8 +8,8 @@ import (
 	"github.com/dedeme/ktlib/file"
 	"github.com/dedeme/ktlib/js"
 	"github.com/dedeme/ktlib/path"
-	"github.com/dedeme/ktlib/sys"
 	"github.com/dedeme/ktlib/str"
+	"github.com/dedeme/ktlib/sys"
 )
 
 // If 'isMozilla' is 'false', it calls "wget -q --no-cache -O - 'url'" and
@@ -153,33 +153,32 @@ func Unzip(source, target string) {
 //   isBook: 'true' if a book shuld be generated.
 //   Files : Files in HTML to convert.
 func Htmldoc(isBook bool, files ...string) []byte {
-  book := "--webpage"
-  if isBook {
-    book = "--book"
-  }
-  out, err := sys.Cmd(
-    "htmldoc",
-    append([]string{
-        book,"--charset", "utf-8", "--footer", "...", "--size", "A4", "-t", "pdf",
-      }, files...,
-    )...,
-  )
-  if err != "" && !str.Starts(str.Trim(err), "PAGES:") {
-    panic(err)
-  }
+	book := "--webpage"
+	if isBook {
+		book = "--book"
+	}
+	out, err := sys.Cmd(
+		"htmldoc",
+		append([]string{
+			book, "--charset", "utf-8", "--footer", "...", "--size", "A4", "-t", "pdf",
+		}, files...,
+		)...,
+	)
+	if err != "" && !str.Starts(str.Trim(err), "PAGES:") {
+		panic(err)
+	}
 
-  return []byte(out)
-};
+	return []byte(out)
+}
 
 // Returns 'html' converted to 'pdf'. It calls 'Htmldoc'.
 //   isBook: 'true' if a book shuld be generated.
 //   html  : Text in HTML to convert.
 func HtmldocStr(isBook bool, html string) []byte {
-  sys.Rand()
-  tmp := file.Tmp("./", "kut_htmldoc")
-  file.Write(tmp, html)
-  r := Htmldoc(isBook, tmp)
-  file.Del(tmp)
-  return r
-};
-
+	sys.Rand()
+	tmp := file.Tmp("./", "kut_htmldoc")
+	file.Write(tmp, html)
+	r := Htmldoc(isBook, tmp)
+	file.Del(tmp)
+	return r
+}

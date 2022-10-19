@@ -86,9 +86,11 @@ var wroot string
 //               -Web pages must be in 'root'/www.
 //   stopcode: Code for stopping server.
 //   handler : Function to process requests.
+//   ferr    : Function to call if an error happends.
 // Connection request/response is limited to 10.000.000 bits.
 func Start(
 	port, tm int, root, stopcode string, handler func(string) string,
+	ferr func(string),
 ) {
 	if sv != nil {
 		return
@@ -99,13 +101,24 @@ func Start(
 	wroot = path.Cat(root, "www")
 	file.Cd(root)
 
+	errCounter := 0
 	for {
 		conn, err := tcp.Accept(sv, tm)
 		if err != nil {
-			panic(err)
+			errCounter++
+			ferr(err.Error())
+			sys.Sleep(5000)
+			continue
+		} else {
+			errCounter = 0
 		}
 
-		tx := tcp.Read(conn, 10_000_000)
+		tx, err := tcp.Read(conn, 10_000_000)
+		if err != nil {
+			ferr(err.Error())
+			sys.Sleep(5000)
+			continue
+		}
 		if tx == stopCode {
 			tcp.CloseConnection(conn)
 			tcp.CloseServer(sv)
@@ -113,7 +126,11 @@ func Start(
 		}
 
 		thread.Run(func() {
-			tcp.WriteBin(conn, []byte(handler(tx)))
+			err := tcp.WriteBin(conn, []byte(handler(tx)))
+			if err != nil {
+				ferr(err.Error())
+				sys.Sleep(5000)
+			}
 			tcp.CloseConnection(conn)
 		})
 	}
