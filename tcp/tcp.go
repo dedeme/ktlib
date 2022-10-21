@@ -15,13 +15,22 @@
 //
 //    // Process to run in server
 //    func process(conn tcp.ConnT) bool {
-//    tx := tcp.Read(conn, 10000)
+//      tx, err := tcp.Read(conn, 10000)
+//      if err != nil {
+//        panic(err)
+//      }
 //      if tx == "end" {
-//        tcp.Write(conn, "Closing server")
+//        err := tcp.Write(conn, "Closing server")
+//        if err != nil {
+//          panic(err)
+//        }
 //        tcp.CloseConnection(conn)
 //        return true
 //      }
-//      tcp.Write(conn, "Send from server: "+tx)
+//      err = tcp.Write(conn, "Send from server: "+tx)
+//      if err != nil {
+//        panic(err)
+//      }
 //      tcp.CloseConnection(conn)
 //      return false
 //    }
@@ -52,8 +61,15 @@
 //          panic(err)
 //        }
 //        sys.Println(str.Fmt("Sending 'abc%d'", i))
-//        tcp.Write(conn, str.Fmt("abc%d", i))
-//        sys.Println(tcp.Read(conn, 10000))
+//        err = tcp.Write(conn, str.Fmt("abc%d", i))
+//        if err != nil {
+//          panic(err)
+//        }
+//        rq, err0 := tcp.Read(conn, 10000)
+//        if err0 != nil {
+//          panic(err0)
+//        }
+//        sys.Println(rq)
 //        tcp.CloseConnection(conn)
 //      }
 //
@@ -62,8 +78,15 @@
 //      if err != nil {
 //        panic(err)
 //      }
-//      tcp.Write(conn, "end")
-//      sys.Println(tcp.Read(conn, 10000))
+//      err = tcp.Write(conn, "end")
+//      if err != nil {
+//        panic(err)
+//      }
+//      rq, err0 := tcp.Read(conn, 10000)
+//      if err0 != nil {
+//        panic(err0)
+//      }
+//      sys.Println(rq)
 //      tcp.CloseConnection(conn)
 //
 //      // Wait until server is ended.
