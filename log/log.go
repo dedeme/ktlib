@@ -45,7 +45,7 @@ var tb *jstb.T[[]*T]
 func Initialize(fpath string) {
 	tb = jstb.New(
 		fpath,
-		[]*T{},
+		func() []*T { return []*T{} },
 		func(entries []*T) string {
 			return js.Wa(arr.Map(entries, toJs))
 		},

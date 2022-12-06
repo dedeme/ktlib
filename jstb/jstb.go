@@ -10,7 +10,6 @@ import (
 
 type T[Tb any] struct {
 	fpath  string
-	init   Tb
 	toJs   func(Tb) string
 	fromJs func(string) Tb
 }
@@ -21,12 +20,12 @@ type T[Tb any] struct {
 //    toJs   : Object JSON serialization
 //    fromJs : Objset JSON deserialization
 func New[Tb any](
-	fpath string, initVal Tb, toJs func(Tb) string, fromJs func(string) Tb,
+	fpath string, initVal func() Tb, toJs func(Tb) string, fromJs func(string) Tb,
 ) *T[Tb] {
 	if !file.Exists(fpath) {
-		file.Write(fpath, toJs(initVal))
+		file.Write(fpath, toJs(initVal()))
 	}
-	return &T[Tb]{fpath, initVal, toJs, fromJs}
+	return &T[Tb]{fpath, toJs, fromJs}
 }
 
 // Returns the JSON representation of the saved object.
