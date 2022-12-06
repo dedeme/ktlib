@@ -17,7 +17,7 @@ type T[Tb any] struct {
 
 // Creates a jstb with a JSON serializable object.
 //    fpath  : Path of table file.
-//    initVal: Initial value to create the table file.
+//    initVal: Initial value for the table.
 //    toJs   : Object JSON serialization
 //    fromJs : Objset JSON deserialization
 func New[Tb any](
