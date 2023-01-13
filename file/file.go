@@ -11,6 +11,7 @@ import (
 	"github.com/dedeme/ktlib/path"
 	"github.com/dedeme/ktlib/str"
 	"io"
+	"io/fs"
 	"io/ioutil"
 	"os"
 	"os/user"
@@ -143,6 +144,22 @@ func Home() string {
 // Returns 'true' if 'fpath' is a directory.
 func IsDirectory(fpath string) bool {
 	if info, err := os.Stat(fpath); err == nil && info.IsDir() {
+		return true
+	}
+	return false
+}
+
+// Returns 'true' if 'fpath' is a link.
+func IsLink(fpath string) bool {
+	if info, err := os.Stat(fpath); err == nil && (info.Mode()&fs.ModeSymlink != 0) {
+		return true
+	}
+	return false
+}
+
+// Returns 'true' if 'fpath' is a regular file.
+func IsRegular(fpath string) bool {
+	if info, err := os.Stat(fpath); err == nil && info.Mode().IsRegular() {
 		return true
 	}
 	return false

@@ -193,10 +193,10 @@ func FromIsoOp(s, sep string) (tm2 int64, ok bool) {
 		if err != nil {
 			return
 		}
-    ok = true
+		ok = true
 		tm2 = gtime.Date(toInt(ps[2]), gtime.Month(toInt(ps[1])),
 			toInt(ps[0]), 12, 0, 0, 0, lc).UnixMilli()
-    return
+		return
 	}
 }
 
@@ -223,10 +223,10 @@ func FromStrOp(s string) (tm2 int64, ok bool) {
 		if err != nil {
 			return
 		}
-    ok = true
+		ok = true
 		tm2 = gtime.Date(toInt(s[:4]), gtime.Month(toInt(s[4:6])),
 			toInt(s[6:]), 12, 0, 0, 0, lc).UnixMilli()
-    return
+		return
 	}
 }
 
