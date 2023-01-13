@@ -107,6 +107,31 @@ func FromClock(tm int64, s string) int64 {
 	}
 }
 
+// Returns a new time equals to 'tm', but setting hour, minute and second
+// matching a string type: "HH:MM:SS", and milliseconds to 0.
+func FromClockOp(tm int64, s string) (tm2 int64, ok bool) {
+	ps := strings.Split(s, ":")
+	if len(ps) != 3 || !allDigits(ps[0]) ||
+		!allDigits(ps[1]) || !allDigits(ps[2]) ||
+		len(ps[0]) != 2 || len(ps[1]) != 2 || len(ps[2]) != 2 ||
+		toInt(ps[0]) < 0 || toInt(ps[0]) > 23 ||
+		toInt(ps[1]) < 0 || toInt(ps[1]) > 59 ||
+		toInt(ps[2]) < 0 || toInt(ps[1]) > 59 {
+		return
+	} else {
+		t := gtime.UnixMilli(tm)
+		lc, err := gtime.LoadLocation("Local")
+		if err != nil {
+			return
+		}
+		ok = true
+		tm2 = gtime.Date(t.Year(), t.Month(), t.Day(),
+			toInt(ps[0]), toInt(ps[1]), toInt(ps[2]),
+			0, lc).UnixMilli()
+		return
+	}
+}
+
 // Returns a time from a string type: MM*DD*YYYY, where '*' is the separator 'sep'.
 func FromEn(s, sep string) int64 {
 	ps := strings.Split(s, sep)
@@ -120,6 +145,24 @@ func FromEn(s, sep string) int64 {
 		}
 		return gtime.Date(toInt(ps[2]), gtime.Month(toInt(ps[0])),
 			toInt(ps[1]), 12, 0, 0, 0, lc).UnixMilli()
+	}
+}
+
+// Returns a time from a string type: MM*DD*YYYY, where '*' is the separator 'sep'.
+func FromEnOp(s, sep string) (tm2 int64, ok bool) {
+	ps := strings.Split(s, sep)
+	if len(ps) != 3 || !allDigits(ps[0]) ||
+		!allDigits(ps[1]) || !allDigits(ps[2]) {
+		return
+	} else {
+		lc, err := gtime.LoadLocation("Local")
+		if err != nil {
+			return
+		}
+		ok = true
+		tm2 = gtime.Date(toInt(ps[2]), gtime.Month(toInt(ps[0])),
+			toInt(ps[1]), 12, 0, 0, 0, lc).UnixMilli()
+		return
 	}
 }
 
@@ -139,6 +182,24 @@ func FromIso(s, sep string) int64 {
 	}
 }
 
+// Returns a time from a string type: DD*MM*YYYY, where '*' is the separator 'sep'.
+func FromIsoOp(s, sep string) (tm2 int64, ok bool) {
+	ps := strings.Split(s, sep)
+	if len(ps) != 3 || !allDigits(ps[0]) ||
+		!allDigits(ps[1]) || !allDigits(ps[2]) {
+		return
+	} else {
+		lc, err := gtime.LoadLocation("Local")
+		if err != nil {
+			return
+		}
+    ok = true
+		tm2 = gtime.Date(toInt(ps[2]), gtime.Month(toInt(ps[1])),
+			toInt(ps[0]), 12, 0, 0, 0, lc).UnixMilli()
+    return
+	}
+}
+
 // Returns a time from a string type: YYYYMMDD.
 func FromStr(s string) int64 {
 	if len(s) != 8 || !allDigits(s) {
@@ -150,6 +211,22 @@ func FromStr(s string) int64 {
 		}
 		return gtime.Date(toInt(s[:4]), gtime.Month(toInt(s[4:6])),
 			toInt(s[6:]), 12, 0, 0, 0, lc).UnixMilli()
+	}
+}
+
+// Returns a time from a string type: YYYYMMDD.
+func FromStrOp(s string) (tm2 int64, ok bool) {
+	if len(s) != 8 || !allDigits(s) {
+		return
+	} else {
+		lc, err := gtime.LoadLocation("Local")
+		if err != nil {
+			return
+		}
+    ok = true
+		tm2 = gtime.Date(toInt(s[:4]), gtime.Month(toInt(s[4:6])),
+			toInt(s[6:]), 12, 0, 0, 0, lc).UnixMilli()
+    return
 	}
 }
 

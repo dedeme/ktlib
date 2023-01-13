@@ -341,7 +341,7 @@ func Shift[T any](a *[]T) T {
 
 // Reorders randomly elements of 'a' in place.
 //
-// Prevously to call this function, 'sys.Rand' shuld be called.
+// Prevously to call this function, 'sys.Rand' should be called.
 func Shuffle[T any](a []T) {
 	for i := len(a); i > 1; {
 		n := rand.Intn(i)
@@ -351,9 +351,9 @@ func Shuffle[T any](a []T) {
 }
 
 //  Sorts elements of 'a' from less to greater.
-//    'less' is a function which returns 'true' if the first paramenter is
+//    'fn' is a function which returns 'true' if the first paramenter is
 //    less than the second one.
-//    NOTE: If 'less' returns 'true' when the first parameter is greater than the
+//    NOTE: If 'fn' returns 'true' when the first parameter is greater than the
 //      second one, then the order is from greater to less.
 func Sort[T any](a []T, fn func(T, T) bool) {
 	sort.Slice(a, func(i, j int) bool {
