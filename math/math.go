@@ -108,6 +108,17 @@ func FromStr(s string) float64 {
 	return r
 }
 
+// Returns the float value of 's', which contains a number in standard format.
+// If function fails returns 'ok=false'.
+func FromStrOp(s string) (n float64, ok bool) {
+	n, err := strconv.ParseFloat(s, 64)
+	if err != nil {
+		return
+	}
+  ok = true
+	return
+}
+
 // Returns napierian logarithm of n.
 func Log(n float64) float64 {
 	return gmath.Log(n)
@@ -224,6 +235,17 @@ func ToInt(s string) int {
 	return r
 }
 
+// Returns the int value of 's'
+// If function fails returns 'ok=false'.
+func ToIntOp(s string) (n int, ok bool) {
+	n, err := strconv.Atoi(s)
+	if err != nil {
+		return
+	}
+  ok = true
+	return
+}
+
 // Returns the int64 value of 's'
 func ToInt64(s string) int64 {
 	r, err := strconv.ParseInt(s, 10, 64)
@@ -231,6 +253,17 @@ func ToInt64(s string) int64 {
 		panic(err)
 	}
 	return r
+}
+
+// Returns the int64 value of 's'
+// If function fails returns 'ok=false'.
+func ToInt64Op(s string) (n int64, ok bool) {
+	n, err := strconv.ParseInt(s, 10, 64)
+	if err != nil {
+		return
+	}
+  ok = true
+	return
 }
 
 // Returns the integer part of n.
