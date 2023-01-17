@@ -10,6 +10,7 @@ import (
 	"github.com/dedeme/ktlib/path"
 	"github.com/dedeme/ktlib/str"
 	"github.com/dedeme/ktlib/sys"
+  "errors"
 )
 
 // If 'isMozilla' is 'false', it calls "wget -q --no-cache -O - 'url'" and
@@ -20,8 +21,8 @@ import (
 //     --load-cookies=/home/deme/.mozilla/firefox/bfrqeymk.default/cookies.sqlite
 //     -q --no-cache -O - url
 //
-// If the reading fails, it returns an empty string.
-func Wget(url string, isMozilla bool) string {
+// If the reading fails, it returns an error. Otherwise the html text.
+func Wget(url string, isMozilla bool) (html string, err error) {
 	opts := []string{
 		"--user-agent=Mozilla",
 		"--load-cookies=/home/deme/" +
@@ -31,11 +32,54 @@ func Wget(url string, isMozilla bool) string {
 		opts = opts[2:]
 	}
 	stdout, stderr := sys.Cmd("wget", opts...)
-	if stderr != "" || stdout == "" {
-		return ""
-	}
-	return stdout
+	if stderr != "" {
+    err = errors.New(stderr)
+  } else if stdout == "" {
+		err = errors.New("Empty html page")
+	} else {
+    html = stdout
+  }
+  return
 }
+
+/// Calls 'bash' with a script for 'node.js' to read a web page.
+// If the reading fails, it returns an error. Otherwise the html text.
+///   url: Url to read.
+///   tm : Milliseconds to wait for reading.
+func Puppeteer(url string, tm int)  (html string, err error){
+  tmpName := file.Tmp("/tmp", "go_libdm_ext_puppeteer");
+  cm := str.Fmt("node -e \""+
+    "const puppeteer = require('puppeteer');"+
+    "(async () => {"+
+    "  try {"+
+    "    const browser = await puppeteer.launch();"+
+    "    const page = await browser.newPage();"+
+    "    page.setDefaultNavigationTimeout(%v);"+
+    "    await page.goto('%v',{waitUntil:'domcontentloaded'});"+
+    "    await page.cookies();" +
+    "    const ct = await page.content();"+
+    "    console.log(ct);"+
+    "    await browser.close();"+
+    "  } catch (e) {"+
+    "    console.error(e.toString());"+
+    "    process.exit(1);"+
+    "  }"+
+    "})();"+
+    "\"",
+    tm, url,
+  );
+  file.Write(tmpName, cm);
+  stdout, stderr := sys.Cmd("bash", tmpName);
+  file.Del(tmpName);
+	if stderr != "" {
+    err = errors.New(stderr)
+  } else if stdout == "" {
+		err = errors.New("Empty html page")
+	} else {
+    html = stdout
+  }
+  return
+};
 
 // Returns the md5 sum of a file. It calls "md5sum 'f'".
 //   f: File to check.
